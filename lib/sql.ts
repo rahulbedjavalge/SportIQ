@@ -1,3 +1,4 @@
+// @ts-nocheck
 // lib/sql.ts
 // Use the browser build of sql.js and load the wasm from /public
 

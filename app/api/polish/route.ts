@@ -7,8 +7,10 @@ function isSportsy(s: string) {
 }
 
 export async function POST(req: NextRequest) {
+  let text: string;
   try {
-    const { text } = await req.json();
+    const body = await req.json();
+    text = body.text;
     const apiKey = process.env.OPENROUTER_API_KEY;
 
     if (!apiKey || !isSportsy(text)) {
@@ -36,6 +38,6 @@ export async function POST(req: NextRequest) {
     const out = data?.choices?.[0]?.message?.content?.trim() || text;
     return NextResponse.json({ text: out, usedModel: "deepseek/deepseek-chat-v3.1:free" });
   } catch {
-    return NextResponse.json({ text, usedModel: "fallback" }, { status: 200 });
+    return NextResponse.json({ text: "Error processing request", usedModel: "fallback" }, { status: 200 });
   }
 }

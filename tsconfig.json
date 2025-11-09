@@ -5,6 +5,7 @@
     "jsx": "preserve",
     "moduleResolution": "Bundler",
     "strict": true,
+    "skipLibCheck": true,
     "baseUrl": ".",
     "paths": {
       "@/*": [
