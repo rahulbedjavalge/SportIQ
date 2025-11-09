@@ -10,7 +10,7 @@ import { polishIfEnabled, PolishResult } from "@/lib/respond";
 
 type Msg = { role: "user" | "bot"; text: string };
 
-const FLASH_QUESTIONS = [
+const QUESTIONS: string[] = [
   "who is playing today",
   "score berlin united",
   "result for munich city",
@@ -20,10 +20,7 @@ const FLASH_QUESTIONS = [
   "which stadium was it played",
   "what sport is this match",
   "next match berlin united",
-  "last match hamburg fc",
-  "top scorer for munich city",
-  "tournament info",
-  "help"
+  "tournament info"
 ];
 
 function smallTalk(text: string): string | null {
@@ -40,15 +37,15 @@ function ruleRoute(text: string): string | null {
   const t = text.toLowerCase();
   if (/who.*playing.*today|today.*fixtures|today.*matches/.test(t)) return "today_fixtures";
   if (/\b(score|result)\b/.test(t)) return "latest_score";
-  if (/top scorer|leading scorer|highest.*scorer/.test(t)) return "top_scorer_team"; // moved up
+  if (/top scorer|leading scorer|highest.*scorer/.test(t)) return "top_scorer_team";
   if (/who.*scored|goal.*scorer|scorers?/.test(t)) return "goal_scorers";
   if (/where.*match|which.*stadium|\bstadium\b|\bcity\b/.test(t)) return "stadium_location";
   if (/what.*sport|type of sport|sport type/.test(t)) return "sport_type_for_match";
   if (/next match|upcoming|fixture/.test(t)) return "upcoming_for_team";
   if (/last match|previous game/.test(t)) return "last_match_for_team";
+  if (/who.*won|winner/.test(t)) return "tournament_info";
   if (/tournament/.test(t)) return "tournament_info";
   if (/help|what can you do/.test(t)) return "help";
-  if (/who.*won|winner/.test(t)) return "tournament_info";
   return null;
 }
 
@@ -58,14 +55,12 @@ export default function Page() {
   ]);
   const [input, setInput] = useState("");
   const [ready, setReady] = useState(false);
-  const [polish, setPolish] = useState(false);
   const [typing, setTyping] = useState(false);
-  const [flashOn, setFlashOn] = useState(false);
-  const [flash, setFlash] = useState<string[]>([]);
-  const [polishStatus, setPolishStatus] = useState<string>("");
-
+  const [showQs, setShowQs] = useState(false);
   const dbRef = useRef<any>(null);
-  const flashTimer = useRef<any>(null);
+
+  // silently keep polish enabled if key exists
+  const POLISH_ENABLED = true;
 
   useEffect(() => {
     (async () => {
@@ -75,47 +70,23 @@ export default function Page() {
     })();
   }, []);
 
-  useEffect(() => {
-    if (!flashOn) {
-      if (flashTimer.current) clearInterval(flashTimer.current);
-      setFlash([]);
-      return;
-    }
-    const shuffle = () => {
-      const pool = [...FLASH_QUESTIONS];
-      for (let i = pool.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [pool[i], pool[j]] = [pool[j], pool[i]];
-      }
-      setFlash(pool.slice(0, 3));
-    };
-    shuffle();
-    flashTimer.current = setInterval(shuffle, 6000);
-    return () => flashTimer.current && clearInterval(flashTimer.current);
-  }, [flashOn]);
-
   async function send() {
     const text = input.trim();
     if (!text || !ready) return;
     setMessages(m => [...m, { role: "user", text }]);
     setInput("");
     setTyping(true);
-    setPolishStatus("");
 
-    // small talk first
     const small = smallTalk(text);
     if (small) {
-      const polished: PolishResult = await polishIfEnabled(small, polish);
-      setPolishStatus(polished.usedModel && polished.usedModel !== "off" ? polished.usedModel : "");
+      const polished: PolishResult = await polishIfEnabled(small, POLISH_ENABLED);
       setMessages(m => [...m, { role: "bot", text: polished.text }]);
       setTyping(false);
       return;
     }
 
-    // rule-first, then ML fallback
     let intent = ruleRoute(text);
     let confidence = 1;
-
     try {
       if (!intent) {
         const pred = await predictIntent(text);
@@ -128,21 +99,18 @@ export default function Page() {
       return;
     }
 
-    // non-sports fallback
     if (!intent || confidence < 0.45) {
       const polished: PolishResult = await polishIfEnabled(
         "I can help with sports only. Try asking about scores, fixtures, scorers, stadiums, or sport type.",
-        polish
+        POLISH_ENABLED
       );
-      setPolishStatus(polished.usedModel && polished.usedModel !== "off" ? polished.usedModel : "");
       setMessages(m => [...m, { role: "bot", text: polished.text }]);
       setTyping(false);
       return;
     }
 
     const raw = queryByIntent(dbRef.current!, intent, text);
-    const polished: PolishResult = await polishIfEnabled(raw, polish);
-    setPolishStatus(polished.usedModel && polished.usedModel !== "off" ? polished.usedModel : "");
+    const polished: PolishResult = await polishIfEnabled(raw, POLISH_ENABLED);
     setMessages(m => [...m, { role: "bot", text: polished.text }]);
     setTyping(false);
   }
@@ -153,8 +121,6 @@ export default function Page() {
         <img src="/logo.svg" alt="logo" width={26} height={26} />
         <h1>SportIQ</h1>
         <span className="badge">AI Sports Companion</span>
-        <span className="badge">Step 3 NLP++</span>
-        {polish && <span className="badge">{polishStatus ? "DeepSeek active" : "Polish on"}</span>}
       </header>
 
       <div className="card" style={{ minHeight: 340 }}>
@@ -186,31 +152,47 @@ export default function Page() {
         </button>
       </div>
 
-      <div className="row" style={{ marginTop: 8, alignItems: "center" }}>
-        <label style={{ display: "flex", gap: 8, alignItems: "center" }}>
-          <input type="checkbox" checked={polish} onChange={e => setPolish(e.target.checked)} />
-          <span className="badge">Polish replies with OpenRouter</span>
-        </label>
-        <button className="btn" onClick={() => setFlashOn(v => !v)}>{flashOn ? "Stop Flashcards" : "Start Flashcards"}</button>
+      <div className="row" style={{ marginTop: 10 }}>
+        <button className="btn" onClick={() => setShowQs(v => !v)}>
+          {showQs ? "Hide Questions" : "Questions"}
+        </button>
       </div>
 
-      {!!flash.length && (
-        <div className="row" style={{ marginTop: 10 }}>
-          {flash.map((q, i) => (
-            <div
-              key={i}
-              className="badge"
-              style={{ padding: "6px 10px", cursor: "pointer" }}
-              onClick={() => setInput(q)}
-              title="Click to fill the input"
-            >
-              {q}
-            </div>
-          ))}
+      {showQs && (
+        <div className="card" style={{ marginTop: 10 }}>
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "1fr 1fr",
+              gap: "10px"
+            }}
+          >
+            {QUESTIONS.map((q, i) => (
+              <div
+                key={i}
+                className="badge"
+                style={{ padding: "8px 12px", cursor: "pointer", textAlign: "center" }}
+                onClick={() => setInput(q)}
+                title="Click to fill the input"
+              >
+                {q}
+              </div>
+            ))}
+          </div>
         </div>
       )}
 
-      <div className="footer">© 2025 SportIQ</div>
+      <footer className="footer">
+        © 2025 SportIQ — built by{" "}
+        <a
+          href="https://www.linkedin.com/in/rahul-bedjavalge/"
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{ color: "#4da3ff", textDecoration: "none", fontWeight: 600 }}
+        >
+          Rahul Bedjavalge
+        </a>
+      </footer>
     </div>
   );
 }
