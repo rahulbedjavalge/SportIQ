@@ -1,0 +1,44 @@
+[
+  { "text": "who is playing today", "intent": "today_fixtures" },
+  { "text": "today fixtures", "intent": "today_fixtures" },
+  { "text": "what games are on today", "intent": "today_fixtures" },
+  { "text": "any matches today", "intent": "today_fixtures" },
+
+  { "text": "score berlin united", "intent": "latest_score" },
+  { "text": "result for munich city", "intent": "latest_score" },
+  { "text": "what was the score hamburg fc", "intent": "latest_score" },
+  { "text": "how did berlin do", "intent": "latest_score" },
+
+  { "text": "who scored for berlin united", "intent": "goal_scorers" },
+  { "text": "goal scorers munich city", "intent": "goal_scorers" },
+  { "text": "who netted for hamburg", "intent": "goal_scorers" },
+  { "text": "names of scorers berlin", "intent": "goal_scorers" },
+
+  { "text": "which stadium was it played", "intent": "stadium_location" },
+  { "text": "where was the match", "intent": "stadium_location" },
+  { "text": "stadium and city info", "intent": "stadium_location" },
+  { "text": "where did berlin play", "intent": "stadium_location" },
+
+  { "text": "what sport is this match", "intent": "sport_type_for_match" },
+  { "text": "type of sport for berlin united vs munich city", "intent": "sport_type_for_match" },
+  { "text": "is this football or something else", "intent": "sport_type_for_match" },
+
+  { "text": "upcoming for berlin united", "intent": "upcoming_for_team" },
+  { "text": "next match munich city", "intent": "upcoming_for_team" },
+  { "text": "who do hamburg play next", "intent": "upcoming_for_team" },
+
+  { "text": "last match berlin united", "intent": "last_match_for_team" },
+  { "text": "previous game hamburg fc", "intent": "last_match_for_team" },
+  { "text": "how did munich do last game", "intent": "last_match_for_team" },
+
+  { "text": "top scorer for berlin united", "intent": "top_scorer_team" },
+  { "text": "who is leading scorer munich city", "intent": "top_scorer_team" },
+  { "text": "highest goal scorer hamburg", "intent": "top_scorer_team" },
+
+  { "text": "tournament info", "intent": "tournament_info" },
+  { "text": "which tournament is this", "intent": "tournament_info" },
+  { "text": "tournament details please", "intent": "tournament_info" },
+
+  { "text": "help", "intent": "help" },
+  { "text": "what can you do", "intent": "help" }
+]
