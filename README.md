@@ -7,7 +7,8 @@ SportIQ is an intelligent sports chatbot built with Next.js, TensorFlow.js, and 
 - **Chat Interface**: Simple, responsive UI for interacting with the bot
 - **Intent Recognition**: NLP model classifies user queries into 10 sports-related intents
 - **Database Queries**: Retrieves sports data from a local SQLite database
-- **Text Polishing**: Uses AI to rephrase sports text for better engagement
+- **Text Polishing**: Uses AI to rephrase sports text for better engagement (always enabled)
+- **Example Questions**: Click the "Questions" button to view and select from example queries in a grid
 - **Offline Training**: Trains the NLP model locally with reproducible results
 - **Deployable**: Ready for deployment on Vercel or other platforms
 
@@ -100,18 +101,16 @@ The model performs well on intents with more training examples but struggles wit
 
 ## Example Questions
 
-Here are 10 example questions you can ask SportIQ:
+Here are example questions you can ask SportIQ (also available via the "Questions" button in the UI):
 
-1. "Who is playing today?" (today_fixtures)
-2. "What was the score for Berlin United?" (latest_score)
-3. "Who scored for Munich City?" (goal_scorers)
-4. "Where was the match played?" (stadium_location)
-5. "What sport is this match?" (sport_type_for_match)
-6. "What's the next match for Hamburg FC?" (upcoming_for_team)
-7. "How did Berlin do in their last game?" (last_match_for_team)
-8. "Who is the top scorer for Munich City?" (top_scorer_team)
-9. "What tournament is this?" (tournament_info)
-10. "What can you do?" (help)
+1. "who is playing today" (today_fixtures)
+2. "score berlin united" (latest_score)
+3. "result for munich city" (latest_score)
+4. "who scored for berlin united" (goal_scorers)
+5. "which stadium was it played" (stadium_location)
+6. "what sport is this match" (sport_type_for_match)
+7. "next match berlin united" (upcoming_for_team)
+8. "tournament info" (tournament_info)
 
 ## API Endpoints
 
