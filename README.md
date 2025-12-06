@@ -14,7 +14,7 @@ SportIQ is an intelligent sports chatbot built with Next.js, TensorFlow.js, and 
 
 ## Live Project
 
-Check out the live version of SportIQ: [SportIQ Live](https://sportiq.vercel.app)
+Check out the live version of SportIQ: [SportIQ Live](https://sport-iq-pi.vercel.app)
 
 ## Installation and Setup
 
