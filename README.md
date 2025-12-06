@@ -12,13 +12,9 @@ SportIQ is an intelligent sports chatbot built with Next.js, TensorFlow.js, and 
 - **Offline Training**: Trains the NLP model locally with reproducible results
 - **Deployable**: Ready for deployment on Vercel or other platforms
 
-## Tech Stack
+## Live Project
 
-- **Frontend**: Next.js 14, React 18, TypeScript
-- **AI/ML**: TensorFlow.js for intent classification and text polishing
-- **Database**: SQLite via sql.js (WebAssembly)
-- **Styling**: Tailwind CSS
-- **Deployment**: Vercel-ready
+Check out the live version of SportIQ: [SportIQ Live](https://sportiq.vercel.app)
 
 ## Installation and Setup
 
@@ -36,9 +32,8 @@ SportIQ is an intelligent sports chatbot built with Next.js, TensorFlow.js, and 
 3. **Set up environment variables**:
    Create a `.env.local` file in the root directory:
    ```
-   OPENROUTER_API_KEY=your_openrouter_api_key_here
+   API_KEY=your_api_key_here
    ```
-   Get your API key from [OpenRouter](https://openrouter.ai/).
 
 4. **Train the NLP model** (optional, model is pre-trained):
    ```bash
